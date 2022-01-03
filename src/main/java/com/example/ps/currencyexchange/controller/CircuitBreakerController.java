@@ -14,11 +14,15 @@ public class CircuitBreakerController {
     private final Logger logger = LoggerFactory.getLogger(CircuitBreakerController.class);
 
     @GetMapping("/circuit-breaker")
-    @Retry(name = "dummy-api")
+    @Retry(name = "dummy-api", fallbackMethod = "dummyApiFallback")
     public String ping() {
         logger.info("Calling dummy-service.");
         ResponseEntity<String> forEntity = new RestTemplate().getForEntity("http://localhost:8989/dummy", String.class);
         return forEntity.getBody();
+    }
+
+    public String dummyApiFallback(Exception ex) {
+        return "Response from dummyApiFallback!";
     }
 
 }
