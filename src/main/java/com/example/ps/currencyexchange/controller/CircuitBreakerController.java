@@ -1,5 +1,6 @@
 package com.example.ps.currencyexchange.controller;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,14 @@ public class CircuitBreakerController {
 
     public String dummyApiFallback(Exception ex) {
         return "Response from dummyApiFallback!";
+    }
+
+    @GetMapping("/v2/circuit-breaker")
+    @CircuitBreaker(name = "default")
+    public String pingV2() {
+        logger.info("Calling dummy-service.");
+        ResponseEntity<String> forEntity = new RestTemplate().getForEntity("http://localhost:8989/dummy", String.class);
+        return forEntity.getBody();
     }
 
 }
