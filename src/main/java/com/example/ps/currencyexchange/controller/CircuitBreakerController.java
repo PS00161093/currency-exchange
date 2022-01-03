@@ -1,6 +1,8 @@
 package com.example.ps.currencyexchange.controller;
 
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +29,9 @@ public class CircuitBreakerController {
     }
 
     @GetMapping("/v2/circuit-breaker")
-    @CircuitBreaker(name = "default")
+    @CircuitBreaker(name = "default", fallbackMethod = "dummyApiFallback")
+    @RateLimiter(name = "default") //num of calls per second
+    @Bulkhead(name = "default") // allowed num of concurrent calls
     public String pingV2() {
         logger.info("Calling dummy-service.");
         ResponseEntity<String> forEntity = new RestTemplate().getForEntity("http://localhost:8989/dummy", String.class);
