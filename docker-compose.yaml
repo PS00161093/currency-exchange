@@ -13,6 +13,18 @@ services:
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://eureka-server:8761/eureka
 
+  currency-conversion:
+    image: in28min/ps-currency-conversion:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8100:8100"
+    networks:
+      - currency-network
+    depends_on:
+      - eureka-server
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://eureka-server:8761/eureka
+
   eureka-server:
     image: in28min/ps-eureka-server:0.0.1-SNAPSHOT
     mem_limit: 700m
